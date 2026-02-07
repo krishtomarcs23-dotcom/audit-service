@@ -2,6 +2,19 @@ Audit Service
 
 A Dockerized audit logging microservice built with FastAPI, PostgreSQL, and Alembic.
 It records and stores audit events (who did what and when) and is designed to integrate with other microservices in a production-style setup.
+🏛️ Architecture Overview
+
+This Audit Service is implemented as an independent microservice responsible for capturing and persisting audit events across the system. It is designed to be loosely coupled and easily integrated with other services such as authentication or order management.
+
+The service is built using FastAPI and runs inside a Docker container. It connects to a PostgreSQL database running in a separate container within the same Docker Compose network. Communication between services relies on Docker service names, ensuring consistent behavior across development and production-like environments.
+
+Database interactions are managed using SQLAlchemy, while Alembic is used for database schema versioning and migrations. The core database schema existed prior to Alembic integration, and Alembic was introduced to manage all subsequent schema evolution in a controlled and versioned manner, starting with performance-oriented improvements.
+
+Audit data is stored in a dedicated audit_events table containing the event type, the actor responsible for the event, and a timestamp. Indexes on these fields support efficient querying for common access patterns such as filtering by user, event type, and time ranges.
+
+All database migrations are executed from within the service container, ensuring that Alembic operates with the same environment variables, networking configuration, and database connectivity as the running application. This avoids host-specific assumptions such as the use of localhost and closely mirrors real-world production deployments.
+
+Overall, the architecture emphasizes clear separation of concerns, container-native configuration, and safe, version-controlled database evolution.
 
 🚀 Features
 
@@ -142,3 +155,4 @@ System activity monitoring
 📄 License
 
 This project is intended for educational and demonstration purposes.
+
